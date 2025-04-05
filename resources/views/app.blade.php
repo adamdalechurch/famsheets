@@ -28,7 +28,9 @@
             </div>
             <!-- end row -->
           </div>
-          @vite(['resources/css/app.css', 'resources/js/app.js'])
+          <div id="app">
+            @vite(['resources/css/app.css', 'resources/js/app.js'])
+          </div>
         </div>
         <!-- end container -->
       </section>

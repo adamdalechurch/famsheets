@@ -2,7 +2,7 @@
     <aside class="sidebar-nav-wrapper">
       <div class="navbar-logo">
         <a href="/">
-          <img src="assets/images/logo/dollar-logo.png" />
+          <img src="assets/images/logo/logo.svg" />
         </a>
       </div>
       <nav class="sidebar-nav">
@@ -128,14 +128,4 @@
           </li>
         </ul>
       </nav>
-      <div class="promo-box">
-        <div class="promo-icon">
-          <img class="mx-auto" src="./assets/images/logo/logo-icon-big.svg" alt="Logo">
-        </div>
-        <h3>Upgrade to PRO</h3>
-        <p>Improve your development process and start doing more with PlainAdmin PRO!</p>
-        <a href="https://plainadmin.com/pro" target="_blank" rel="nofollow" class="main-btn primary-btn btn-hover">
-          Upgrade to PRO
-        </a>
-      </div>
     </aside>

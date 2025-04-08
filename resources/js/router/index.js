@@ -1,8 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import SignIn from '../components/SignIn.vue';
-import SignUp from '../components/SignUp.vue';
-import PasswordReset from '../components/PasswordReset.vue';
-import Transactions from '../components/TransactionForm.vue';
+import SignIn from '../components/auth/SignIn.vue';
+import SignUp from '../components/auth/SignUp.vue';
+import PasswordReset from '../components/auth/PasswordReset.vue';
+import Transactions from '../components/app/TransactionForm.vue';
 
 const routes = [
   { path: '/', redirect: '/signin' },

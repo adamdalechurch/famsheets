@@ -1,57 +1,87 @@
 <template>
   <div>
-    <h2>Transactions</h2>
+    <h2>New Transaction</h2>
     <form @submit.prevent="submitTransaction">
       <div class="input-style-1">
         <label>Description</label>
-        <input v-model="transaction.description" placeholder="Description" required />
+        <DescriptionEdit v-model="transaction.description" />
       </div>
       <div class="input-style-1">
-        <label>Amount</label>
-        <input v-model="transaction.total" type="number" placeholder="Amount" required />
+        <label>Total</label>
+        <input v-model="transaction.total" type="number" required />
       </div>
       <div class="input-style-1">
         <label>Transaction Date</label>
         <input v-model="transaction.transaction_date" type="date" required />
       </div>
-      <button type="submit" class="btn btn-primary mt-3">Add Transaction</button>
-    </form>
+      <div class="input-style-1">
+        <label>Is Income</label>
+        <input type="checkbox" v-model="transaction.is_income" />
+      </div>
+      <div class="input-style-1">
+        <label>Recurring</label>
+        <input type="checkbox" v-model="transaction.recurring" />
+      </div>
+   
+      <TransactionItems v-model="transaction.items" />
 
-    <div class="card-style mb-30">
-      <h6 class="mb-25">Transactions List</h6>
-      <ul>
-        <li v-for="tx in transactions" :key="tx.id">
-          {{ tx.description }} - ${{ tx.total }} on {{ tx.transaction_date }}
-        </li>
-      </ul>
-    </div>
+      <br />
+
+      <button type="submit">Submit Transaction</button>
+    </form>
   </div>
 </template>
+
 <script>
+import DescriptionEdit from './DescriptionEdit.vue';
+import CategoryEdit from './CategoryEdit.vue';
+import TransactionItems from './TransactionItems.vue';
+import AutoCompleteInput from './AutoCompleteInput.vue';
 import axios from 'axios';
 
 export default {
+  components: { DescriptionEdit, CategoryEdit, AutoCompleteInput, TransactionItems },
   data() {
     return {
-      transactions: [],
-      transaction: { description: '', total: 0, transaction_date: '' },
+      transaction: {
+        user_id: 1, // Replace with auth info
+        user_group_id: null,
+        description: '',
+        total: 0,
+        is_income: false,
+        recurring: false,
+        transaction_schedule_id: null,
+        income_source_id: null,
+        transaction_date: '',
+        items: [{ category_id: null, description: '', amount: 0 }],
+      },
     };
   },
   methods: {
-    fetchTransactions() {
-      axios.get('/api/transactions').then(response => {
-        this.transactions = response.data;
-      });
+    addItem() {
+      this.transaction.items.push({ category_id: null, description: '', amount: 0 });
+    },
+    removeItem(index) {
+      this.transaction.items.splice(index, 1);
     },
     submitTransaction() {
-      axios.post('/api/transactions', this.transaction).then(() => {
-        this.fetchTransactions();
-        this.transaction = { description: '', total: 0, transaction_date: '' };
+      axios.post('/api/transactions', this.transaction).then(res => {
+        alert('Transaction added!');
+        // Reset form
+        this.transaction = {
+          user_id: 1,
+          user_group_id: null,
+          description: '',
+          total: 0,
+          is_income: false,
+          recurring: false,
+          transaction_schedule_id: null,
+          income_source_id: null,
+          transaction_date: '',
+          items: [{ category_id: null, description: '', amount: 0 }],
+        };
       });
     },
-  },
-  mounted() {
-    this.fetchTransactions();
   },
 };
 </script>

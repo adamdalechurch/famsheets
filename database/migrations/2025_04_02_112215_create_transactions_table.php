@@ -16,7 +16,7 @@ return new class extends Migration
             $table->decimal('total', 10, 2);
             $table->boolean('is_income')->default(false);
             $table->boolean('recurring')->default(false);
-            $table->foreignId('transaction_schedule_id')->nullable()->constrained('transaction_schedule')->onDelete('cascade');
+            // $table->foreignId('transaction_schedule_id')->nullable()->constrained('transaction_schedule')->onDelete('cascade');
 
             // Require foreign key to income_sources when is_income is true
             $table->foreignId('income_source_id')->nullable()->constrained('income_sources')->onDelete('cascade');

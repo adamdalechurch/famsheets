@@ -20,6 +20,7 @@
                 v-else
                 v-model="row[column.key]"
                 :type="column.type || 'text'"
+                step="0.01"
                 class="form-control"
                 :placeholder="column.placeholder || ''"
               />

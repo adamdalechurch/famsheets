@@ -1,15 +1,17 @@
 <?php
-
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
 use App\Http\Middleware\Authenticate;
 
+// Serve the auth Vue app for authentication routes
+Route::get('/auth/{any}', [ AuthController::class, 'index'])->name('auth');
+
+// Serve the main Vue app after login, protect it with auth middleware
 Route::middleware([Authenticate::class])->group(function () {
     Route::get('/', function () {
         return view('app');
-    })->name('app'); // This route is for the main application page
-
+    })->where('any', '.*')->name('home');
+    Route::get('/app/{any?}', function () {
+        return view('app');
+    })->where('any', '.*')->name('app');
 });
-
-Route::get('/auth', function () {
-    return view('auth');
-})->name('auth'); // This route is for authentication pages

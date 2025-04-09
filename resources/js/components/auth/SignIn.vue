@@ -55,7 +55,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import AuthService from '@/services/AuthService';
 
 export default {
   name: 'SignIn',
@@ -69,13 +69,15 @@ export default {
   methods: {
     async signIn() {
       try {
-        const response = await axios.post('/api/login', {
-          email: this.email,
-          password: this.password,
-          remember: this.rememberMe,
-        });
-        alert('Logged in!');
-        this.$router.push('/transactions');
+        // const response = await axios.post('/api/login', {
+        //   email: this.email,
+        //   password: this.password,
+        //   remember: this.rememberMe,
+        // });
+        // alert('Logged in!');
+        // this.$router.push('/transactions');
+        const response = await AuthService.login(this.email, this.password, this.rememberMe);
+        // this.$router.push('/app/transactions');
       } catch (error) {
         alert('Login failed.');
         console.error(error);

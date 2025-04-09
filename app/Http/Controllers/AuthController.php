@@ -10,6 +10,17 @@ use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
+    public function index()
+    {
+        // return view('auth');
+        // if (Auth::check()) {
+        //     return redirect()->route('app', 'transactions');
+
+        // } else {
+            return view('auth');
+        // }
+    }
+    //redirect if logged in:
     // Register a new user
     public function register(Request $request)
     {
@@ -24,6 +35,8 @@ class AuthController extends Controller
             'email'    => $request->email,
             'password' => Hash::make($request->password),
         ]);
+
+        Auth::login($user);
 
         return response()->json(['user' => $user], 201);
     }
@@ -42,7 +55,11 @@ class AuthController extends Controller
             ]);
         }
 
+
         $user = Auth::user();
+
+        Auth::login($user);
+
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return response()->json([

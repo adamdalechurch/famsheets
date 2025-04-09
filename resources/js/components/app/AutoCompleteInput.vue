@@ -9,8 +9,12 @@
       :placeholder="placeholder"
     />
     <ul v-if="showSuggestions && filteredSuggestions.length">
-      <li v-for="item in filteredSuggestions" :key="item" @click="select(item)">
-        {{ item }}
+      <li
+        v-for="item in filteredSuggestions"
+        :key="item.id"
+        @click="select(item)"
+      >
+        {{ item[displayField] }}
       </li>
     </ul>
   </div>
@@ -19,58 +23,55 @@
 <script>
 export default {
   props: {
-    modelValue: String,
+    modelValue: [String, Number],
     suggestions: Array,
-    placeholder: String
+    placeholder: String,
+    displayField: {
+      type: String,
+      default: 'name'
+    }
   },
   emits: ['update:modelValue'],
   data() {
     return {
-      input: this.modelValue || '',
+      input: '',
       showSuggestions: false
     };
   },
   computed: {
     filteredSuggestions() {
       return this.suggestions.filter(item =>
-        item.toLowerCase().includes(this.input.toLowerCase())
+        item[this.displayField]
+          .toLowerCase()
+          .includes(this.input.toLowerCase())
       );
     }
   },
   watch: {
-    modelValue(newVal) {
-      this.input = newVal;
+    modelValue: {
+      immediate: true,
+      handler(val) {
+        const match = this.suggestions.find(s => s.id === val);
+        this.input = match ? match[this.displayField] : '';
+      }
+    },
+    suggestions: {
+      immediate: true,
+      handler() {
+        const match = this.suggestions.find(s => s.id === this.modelValue);
+        this.input = match ? match[this.displayField] : '';
+      }
     }
   },
   methods: {
     onInput() {
-      this.$emit('update:modelValue', this.input);
+      this.input = this.input; // just trigger filtering, don't update modelValue
     },
     select(item) {
-      this.input = item;
-      this.$emit('update:modelValue', item);
+      this.input = item[this.displayField];
+      this.$emit('update:modelValue', item.id);
       this.showSuggestions = false;
     }
   }
 };
 </script>
-
-<style scoped>
-ul {
-  position: absolute;
-  background: white;
-  border: 1px solid #ddd;
-  max-height: 150px;
-  overflow-y: auto;
-  padding-left: 0;
-  list-style: none;
-  z-index: 10;
-}
-li {
-  padding: 5px 10px;
-  cursor: pointer;
-}
-li:hover {
-  background-color: #f2f2f2;
-}
-</style>

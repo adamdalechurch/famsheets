@@ -1,13 +1,15 @@
 <template>
   <AutoCompleteInput
-    v-model="category"
+    v-model="categoryId"
     :suggestions="suggestions"
+    display-field="name"
     placeholder="Transaction Category"
   />
 </template>
 
 <script>
 import AutoCompleteInput from './AutoCompleteInput.vue';
+import axios from '@/util/axios';
 
 export default {
   props: ['modelValue'],
@@ -15,20 +17,22 @@ export default {
   components: { AutoCompleteInput },
   data() {
     return {
-      category: this.modelValue,
-      suggestions: [
-        'Groceries', 'Gasoline/Fuel', 'Utilities', 'Entertainment',
-        'Healthcare', 'Travel', 'Dining', 'Pets', 'Clothing'
-      ]
+      categoryId: this.modelValue,
+      suggestions: []
     };
   },
   watch: {
-    category(val) {
+    categoryId(val) {
       this.$emit('update:modelValue', val);
     },
     modelValue(val) {
-      this.category = val;
+      this.categoryId = val;
     }
+  },
+  mounted() {
+    axios.get('/api/categories').then(res => {
+      this.suggestions = res.data; // expects { id, name }
+    });
   }
 };
 </script>

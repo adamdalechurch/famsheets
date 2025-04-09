@@ -1,9 +1,10 @@
 <template>
-  <AutoCompleteInput
+  <!-- <AutoCompleteInput
     v-model="description"
     :suggestions="suggestions"
     placeholder="Transaction Description"
-  />
+  /> -->
+<input v-model="description" placeholder="Transaction Description" />
 </template>
 
 <script>

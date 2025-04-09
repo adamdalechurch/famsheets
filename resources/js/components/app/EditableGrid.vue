@@ -8,17 +8,25 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(row, index) in modelValue" :key="index">
+        <tr v-for="(row, rowIndex) in modelValue" :key="rowIndex">
           <td v-for="column in columns" :key="column.key">
-            <input
-              v-model="row[column.key]"
-              :type="column.type || 'text'"
-              class="form-control"
-              :placeholder="column.placeholder || ''"
-            />
+            <div class="input-style-1">
+              <component
+                v-if="column.editor"
+                :is="column.editor"
+                v-model="row[column.key]"
+              />
+              <input
+                v-else
+                v-model="row[column.key]"
+                :type="column.type || 'text'"
+                class="form-control"
+                :placeholder="column.placeholder || ''"
+              />
+            </div>
           </td>
           <td>
-            <button class="btn btn-danger btn-sm" @click="removeRow(index)">×</button>
+            <button class="btn btn-danger btn-sm" @click="removeRow(rowIndex)">×</button>
           </td>
         </tr>
       </tbody>
@@ -32,7 +40,7 @@ export default {
   name: "EditableGrid",
   props: {
     modelValue: { type: Array, required: true },
-    columns: { type: Array, required: true },
+    columns: { type: Array, required: true }, // column.editor can be a Vue component
   },
   emits: ["update:modelValue"],
   methods: {

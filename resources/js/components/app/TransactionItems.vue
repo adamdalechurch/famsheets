@@ -10,10 +10,11 @@
 
 <script>
 import EditableGrid from './EditableGrid.vue';
+import CategoryEdit from './CategoryEdit.vue';
 
 export default {
   name: "TransactionItems",
-  components: { EditableGrid },
+  components: { EditableGrid, CategoryEdit },
   props: {
     modelValue: Array,
   },
@@ -34,6 +35,7 @@ export default {
           key: "category_id",
           type: "number",
           placeholder: "Category ID",
+          editor: CategoryEdit 
         },
         {
           label: "Description",

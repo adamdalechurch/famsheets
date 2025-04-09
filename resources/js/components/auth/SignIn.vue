@@ -61,8 +61,8 @@ export default {
   name: 'SignIn',
   data() {
     return {
-      email: '',
-      password: '',
+      email: 'admin@famsheets.com',
+      password: 'admin',
       rememberMe: false,
     };
   },

@@ -21,5 +21,21 @@ class DatabaseSeeder extends Seeder
             'email' => 'admin@famsheets.com',
             'password' => bcrypt('admin'),
         ]);
+
+        \App\Models\Category::factory()->create([
+            'name' => 'Food',
+        ]);
+        \App\Models\Category::factory()->create([
+            'name' => 'Gas',
+        ]);
+        \App\Models\Category::factory()->create([
+            'name' => 'Rent/Mortgage',
+        ]);
+        \App\Models\Category::factory()->create([
+            'name' => 'Utilities',
+        ]);
+        \App\Models\Category::factory()->create([
+            'name' => 'Other',
+        ]);
     }
 }

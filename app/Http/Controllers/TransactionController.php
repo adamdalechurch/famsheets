@@ -6,6 +6,7 @@ use App\Models\Transaction;
 use App\Models\TransactionItem;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Auth;
 
 class TransactionController extends Controller
 {
@@ -17,19 +18,21 @@ class TransactionController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'user_id' => 'required|exists:users,id',
+            // 'user_id' => 'required|exists:users,id',
             'user_group_id' => 'nullable|exists:user_groups,id',
             'description' => 'required|string|max:255',
             'total' => 'required|numeric',
             'is_income' => 'required|boolean',
             'recurring' => 'required|boolean',
-            'transaction_schedule_id' => 'nullable|exists:transaction_schedule,id',
-            'income_source_id' => ['nullable', Rule::requiredIf($request->is_income), 'exists:income_sources,id'],
+            // 'transaction_schedule_id' => 'nullable|exists:transaction_schedule,id',
+            // 'income_source_id' => ['nullable', Rule::requiredIf($request->is_income), 'exists:income_sources,id'],
             'transaction_date' => 'required|date',
             'items' => 'required|array',
             'items.*.category_id' => 'required|exists:categories,id',
             'items.*.amount' => 'required|numeric|min:0',
         ]);
+
+        $validated['user_id'] = Auth::id();
 
         $transaction = Transaction::create($validated);
 
@@ -56,6 +59,7 @@ class TransactionController extends Controller
         ]);
 
         $transaction->update($validated);
+        $transaction->user_id = Auth::id();
 
         if (isset($validated['items'])) {
             $transaction->transactionItems()->delete();

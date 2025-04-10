@@ -8,6 +8,7 @@ use App\Http\Controllers\IncomeSourceController;
 use App\Http\Controllers\IncomeSourceCategoryController;
 use App\Http\Controllers\UserGroupController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DashboardController;
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout']);
@@ -15,6 +16,10 @@ Route::post('/register', [AuthController::class, 'register']);
 
 // all non auth routes should be protected:
 Route::middleware('auth:sanctum')->group(function () {
+    // dashboard routes
+    Route::get('/dashboard-stats', [DashboardController::class, 'index']);
+    Route::get('/dashboard-chart', [DashboardController::class, 'chartData']);
+
     // Transaction Routes
     Route::apiResource('transactions', TransactionController::class);
 

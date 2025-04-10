@@ -18,13 +18,13 @@
       <nav class="sidebar-nav">
         <ul>
           <li class="nav-item">
-            <router-link to="/">
+            <router-link to="/app">
               <span class="icon"><i class="lni lni-dashboard"></i></span>
               <span class="text">Dashboard</span>
             </router-link>
           </li>
           <li class="nav-item">
-            <router-link to="/transactions">
+            <router-link to="/app/transactions">
               <span class="icon"><i class="lni lni-wallet"></i></span>
               <span class="text">Transactions</span>
             </router-link>

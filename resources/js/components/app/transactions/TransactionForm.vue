@@ -54,7 +54,7 @@ export default {
         recurring: false,
         transaction_schedule_id: null,
         income_source_id: null,
-        transaction_date: '',
+        transaction_date: new Date().toISOString().split('T')[0],
         items: [{ category_id: null, description: '', amount: 0 }],
       },
     };
@@ -70,18 +70,7 @@ export default {
       axios.post('/api/transactions', this.transaction).then(res => {
         alert('Transaction added!');
         // Reset form
-        this.transaction = {
-          user_id: 1,
-          user_group_id: null,
-          description: '',
-          total: 0,
-          is_income: false,
-          recurring: false,
-          transaction_schedule_id: null,
-          income_source_id: null,
-          transaction_date: '',
-          items: [{ category_id: null, description: '', amount: 0 }],
-        };
+        // .. abridged
       });
     },
   },

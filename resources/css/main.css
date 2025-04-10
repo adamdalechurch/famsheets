@@ -2694,6 +2694,7 @@ h6,
   position: sticky;
   top: 0;
   z-index: 99;
+  margin: 0 !important;
 }
 .header .header-left .menu-toggle-btn .main-btn {
   padding: 10px 16px;

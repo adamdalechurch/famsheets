@@ -35,10 +35,10 @@
 </template>
 
 <script>
-import DescriptionEdit from './DescriptionEdit.vue';
-import CategoryEdit from './CategoryEdit.vue';
+import DescriptionEdit from '@/components/common/DescriptionEdit.vue';
+import CategoryEdit from '@/components/common/CategoryEdit.vue';
 import TransactionItems from './TransactionItems.vue';
-import AutoCompleteInput from './AutoCompleteInput.vue';
+import AutoCompleteInput from '@/components/common/AutoCompleteInput.vue';
 import axios from 'axios';
 
 export default {

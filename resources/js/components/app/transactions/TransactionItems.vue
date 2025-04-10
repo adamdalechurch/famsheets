@@ -9,8 +9,8 @@
 </template>
 
 <script>
-import EditableGrid from './EditableGrid.vue';
-import CategoryEdit from './CategoryEdit.vue';
+import EditableGrid from '@/components/common/EditableGrid.vue';
+import CategoryEdit from '@/components/common/CategoryEdit.vue';
 
 export default {
   name: "TransactionItems",

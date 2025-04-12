@@ -12,7 +12,8 @@ class TransactionController extends Controller
 {
     public function index()
     {
-        return response()->json(Transaction::with(['transactionItems.category', 'transactionSchedule', 'incomeSource'])->get());
+        return response()->json(Transaction::with(['transactionItems.category'])->get());
+        // return response()->json(Transaction::with(['transactionItems.category', 'transactionSchedule', 'incomeSource'])->get());
     }
 
     public function store(Request $request)

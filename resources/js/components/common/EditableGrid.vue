@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="table-wrapper table-responsive">
     <table class="table">
       <thead>
         <tr>
@@ -9,41 +9,68 @@
       </thead>
       <tbody>
         <tr v-for="(row, rowIndex) in modelValue" :key="rowIndex">
-          <td v-for="column in columns" :key="column.key">
+          <td class="min-width" v-for="column in columns" :key="column.key">
             <div class="input-style-1">
               <component
                 v-if="column.editor"
                 :is="column.editor"
                 v-model="row[column.key]"
               />
-              <input
-                v-else
-                v-model="row[column.key]"
-                :type="column.type || 'text'"
-                step="0.01"
-                class="form-control"
-                :placeholder="column.placeholder || ''"
-              />
+              <template v-else>
+                <input
+                  v-if="isEditing(rowIndex, column.key) || !row[column.key]"
+                  v-model="row[column.key]"
+                  :type="column.type || 'text'"
+                  step="0.01"
+                  class="form-control"
+                  :placeholder="column.placeholder || ''"
+                  @focus="setEditing(rowIndex, column.key)"
+                  @blur="clearEditing"
+                />
+                <span
+                  v-else
+                  @click="setEditing(rowIndex, column.key)"
+                  style="cursor: pointer;"
+                >
+                  {{ row[column.key] }}
+                </span>
+              </template>
             </div>
           </td>
-          <td>
-            <button class="btn btn-danger btn-sm" @click="removeRow(rowIndex)">×</button>
+          <td style="padding-top:0">
+            <div class="action">
+              <a class="text-danger h2" @click="removeRow(rowIndex)">
+                <i class="lni lni-trash-can"></i>
+              </a>
+            </div>
           </td>
+          <td v-if="showOpen" style="padding-top:0">
+            <div class="action">
+              <a class="text-primary h2" @click="fireOpen(row)">
+                <i class="lni lni-eye"></i>
+              </a>
+            </div>
+          </td> 
         </tr>
       </tbody>
-    </table>
+    </table> 
     <button class="btn btn-sm btn-primary" @click="addRow">Add Row</button>
   </div>
 </template>
-
 <script>
 export default {
   name: "EditableGrid",
   props: {
     modelValue: { type: Array, required: true },
-    columns: { type: Array, required: true }, // column.editor can be a Vue component
+    columns: { type: Array, required: true },
+    showOpen: { type: Boolean, default: false },
   },
   emits: ["update:modelValue"],
+  data() {
+    return {
+      editingCell: null,
+    };
+  },
   methods: {
     addRow() {
       const newRow = {};
@@ -57,6 +84,19 @@ export default {
       updated.splice(index, 1);
       this.$emit("update:modelValue", updated);
     },
+    isEditing(rowIndex, key) {
+      return this.editingCell?.rowIndex === rowIndex && this.editingCell?.key === key;
+    },
+    setEditing(rowIndex, key) {
+      this.editingCell = { rowIndex, key };
+    },
+    clearEditing() {
+      this.editingCell = null;
+    },
+    fireOpen(row) {
+      this.$emit("open", row);
+    },
   },
 };
 </script>
+

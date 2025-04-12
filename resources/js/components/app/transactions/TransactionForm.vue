@@ -46,8 +46,6 @@ export default {
   data() {
     return {
       transaction: {
-        user_id: 1, // Replace with auth info
-        user_group_id: null,
         description: '',
         total: 0,
         is_income: false,
@@ -58,6 +56,24 @@ export default {
         items: [{ category_id: null, description: '', amount: 0 }],
       },
     };
+  },
+  props: {
+    transaction_id: {
+      type: Number,
+      default: null,
+    }
+  },
+  watch: {
+    transaction_id: {
+      immediate: true,
+      handler(val) {
+        if (val) {
+          axios.get(`/api/transactions/${val}`).then(res => {
+            this.transaction = res.data;
+          });
+        }
+      },
+    },
   },
   methods: {
     addItem() {

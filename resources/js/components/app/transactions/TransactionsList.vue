@@ -2,8 +2,10 @@
   <div>
     <h2>All Transactions</h2>
     <EditableGrid
-      v-model="transactions"
+      v-model="localTransactions"
       :columns="columns"
+      @open="openTransaction"
+      show-open
     />
     <br />
     <button class="btn btn-success" @click="saveChanges">Save Changes</button>
@@ -20,7 +22,7 @@ export default {
   components: { EditableGrid, DescriptionEdit },
   data() {
     return {
-      transactions: [],
+      localTransactions: [],
       columns: [
         {
           label: 'Description',
@@ -51,13 +53,25 @@ export default {
       ],
     };
   },
+  props: {
+    modelValue: Array,
+  },
+  watch: {
+    modelValue: {
+      handler(newVal) {
+        this.localTransactions = [...newVal];
+      },
+      immediate: true,
+    },
+  },
   created() {
     this.loadTransactions();
   },
   methods: {
     loadTransactions() {
       axios.get('/api/transactions').then((res) => {
-        this.transactions = res.data;
+        // this.transactions = res.data;
+        this.$emit('update:modelValue', res.data);
       });
     },
     saveChanges() {
@@ -67,6 +81,9 @@ export default {
         console.error(err);
         alert('Failed to save changes.');
       });
+    },
+    openTransaction(transaction) {
+      this.$emit('open', transaction);
     },
   },
 };

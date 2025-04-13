@@ -1,5 +1,5 @@
 <template>
-  <div class="table-wrapper table-responsive">
+  <div class="table-wrapper table-responsive mb-4">
     <table class="table">
       <thead>
         <tr>
@@ -18,11 +18,11 @@
               />
               <template v-else>
                 <input
-                  v-if="isEditing(rowIndex, column.key) || !row[column.key]"
+                  v-if="isEditing(rowIndex, column.key) || !row[column.key] || column.type === 'checkbox'"
                   v-model="row[column.key]"
                   :type="column.type || 'text'"
                   step="0.01"
-                  class="form-control"
+                  :class="inputClass(column.key)"
                   :placeholder="column.placeholder || ''"
                   @focus="setEditing(rowIndex, column.key)"
                   @blur="clearEditing"
@@ -54,7 +54,7 @@
         </tr>
       </tbody>
     </table> 
-    <button class="btn btn-sm btn-primary" @click="addRow">Add Row</button>
+    <button v-if="showAdd" class="btn btn-sm btn-primary" @click="addRow">Add Row</button>
   </div>
 </template>
 <script>
@@ -64,6 +64,7 @@ export default {
     modelValue: { type: Array, required: true },
     columns: { type: Array, required: true },
     showOpen: { type: Boolean, default: false },
+    showAdd: { type: Boolean, default: true },
   },
   emits: ["update:modelValue"],
   data() {
@@ -72,6 +73,22 @@ export default {
     };
   },
   methods: {
+    inputClass(colKey) {
+      const type = this.columns.find((col) => col.key === colKey)?.type || "text";
+
+      switch (type) {
+        case "text":
+          return "form-control";
+        case "number":
+          return "form-control";
+        case "date":
+          return "form-control";
+        case "checkbox":
+          return "";
+        default:
+          return "form-control";
+      }
+    },
     addRow() {
       const newRow = {};
       this.columns.forEach((col) => {
@@ -80,10 +97,11 @@ export default {
       this.$emit("update:modelValue", [...this.modelValue, newRow]);
     },
     removeRow(index) {
+      let deleted_val = this.modelValue[index];
       const updated = [...this.modelValue];
       updated.splice(index, 1);
       this.$emit("update:modelValue", updated);
-      this.$emit("delete-index", index);
+      this.$emit("delete", deleted_val);
     },
     isEditing(rowIndex, key) {
       return this.editingCell?.rowIndex === rowIndex && this.editingCell?.key === key;

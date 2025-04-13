@@ -16,6 +16,7 @@
               @open="editTransaction"
               @delete="deleteTransaction"
               v-model="transactions"
+              :per-page="perPage"
             />
           </div>
         </div>   
@@ -40,9 +41,18 @@ export default {
   mounted() {
     this.getTransactionidFromRouter();
   },
+  props: {
+    perPage: {
+      type: Number,
+      default: 25,
+    },
+  },
   watch: {
     $route(to, from) {
       this.getTransactionidFromRouter();
+      if (this.transaction_id === null) {
+        this.updateTransactions(this.transactions);
+      }
     }
   },
   methods: {
@@ -73,9 +83,8 @@ export default {
         this.transactions.push(transaction);
       }
     },
-    deleteTransaction(id) {
-      alert('delete transaction ' + id);
-      this.transactions = this.transactions.filter(t => t.id !== id);
+    deleteTransaction(index) {
+      this.transactions = this.transactions.filter((_, i) => i !== index);
     },
     updateTransactions(transactions) {
       this.transactions = transactions;

@@ -23,6 +23,14 @@ Route::middleware('auth:sanctum')->group(function () {
     // Transaction Routes
     Route::apiResource('transactions', TransactionController::class);
 
+    //bulk update transactions
+    Route::post('/transactions/bulk-update', [TransactionController::class, 'bulkUpdate'])
+        ->name('transactions.bulk-update');
+
+    // parse csv as json:
+    Route::post('/transactions/parse-csv', [TransactionController::class, 'parse_csv'])
+        ->name('transactions.parse-csv');
+
     // Recurring Transactions (Transaction Schedule)
     Route::apiResource('transaction-schedules', TransactionScheduleController::class);
 

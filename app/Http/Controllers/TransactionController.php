@@ -10,12 +10,17 @@ use Illuminate\Support\Facades\Auth;
 
 class TransactionController extends Controller
 {
-    public function index()
-    {
-        return response()->json(Transaction::with(['transactionItems.category'])->get());
-        // return response()->json(Transaction::with(['transactionItems.category', 'transactionSchedule', 'incomeSource'])->get());
+public function index(Request $request)
+{
+    $query = Transaction::with(['transactionItems.category']);
+
+    if ($request->has('paginate') && $request->boolean('paginate')) {
+        $perPage = $request->input('per_page', 10);
+        return response()->json($query->paginate($perPage));
     }
 
+    return response()->json($query->get());
+}
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -86,5 +91,91 @@ public function update(Request $request, Transaction $transaction)
     {
         $transaction->delete();
         return response()->json(['message' => 'Transaction deleted']);
+    }
+
+// bulk update:
+public function bulkUpdate(Request $request)
+{
+    $validated = $request->validate([
+        'transactions' => 'required|array',
+        // 'transactions.*.id' => 'required|exists:transactions,id',
+        'transactions.*.description' => 'sometimes|string|max:255',
+        'transactions.*.total' => 'sometimes|numeric',
+        'transactions.*.is_income' => 'sometimes|boolean',
+        'transactions.*.recurring' => 'sometimes|boolean',
+        'transactions.*.transaction_date' => 'sometimes|date',
+        'transactions.*.transaction_items' => 'sometimes|array',
+        'transactions.*.transaction_items.*.category_id' => 'required_with:transaction_items|exists:categories,id',
+        'transactions.*.transaction_items.*.amount' => 'required_with:transaction_items|numeric|min:0',
+    ]);
+
+    foreach ($validated['transactions'] as $data) {
+        $transaction = new Transaction;
+        if(isset($data['id'])){
+            $transaction = Transaction::find($data['id']);
+            $transaction->update($data);
+        } else{
+            $data['user_id'] = Auth::id();
+            $transaction = $transaction->create($data);
+            $transaction->save();
+        }
+
+        if (isset($data['transaction_items'])) {
+            $transaction->transactionItems()->delete();
+
+            foreach ($data['transaction_items'] as $item) {
+                if(!isset($item['transaction_id'])){
+                    $item['transaction_id'] = $transaction->id;
+                }
+
+                $transaction->transactionItems()->create($item);
+            }
+        }
+    }
+
+    return response()->json(['message' => 'Transactions updated successfully']);
+    }
+
+    public function parse_csv(Request $request)
+    {
+        $validated = $request->validate([
+            'csv' => 'required|file|mimes:csv,txt',
+        ]);
+
+        $file = $validated['csv'];
+        $path = $file->store('temp');
+        $data = array_map('str_getcsv', file(storage_path('app/' . $path)));
+        // remove first row (header)
+        array_shift($data);
+        // remove empty rows
+        $data = array_filter($data, function ($row) {
+            return !empty(array_filter($row));
+        });
+        // map to array of transactions
+        $transactions = array_map(function ($row) {
+        $existing_category = \App\Models\Category::where('name', $row[10])->first();
+
+        $category_id = $existing_category ? $existing_category->id : null;
+        if (!$category_id) {
+            $category = \App\Models\Category::create(['name' => $row[10]]);
+            $category_id = $category->id;
+        }
+
+            return [
+                'transaction_date' => \Carbon\Carbon::createFromFormat('m/d/Y', $row[1])->format('Y-m-d'),
+                'total' => floatval($row[2]),
+                'is_income' => ($row[3] == 'Credit') ? 1 : 0,
+                'description' => $row[11] == "" ? "Unknown" : $row[11],
+                'user_id' => Auth::id(),
+                'transaction_items' => [
+                    [
+                        'category_id' => $category_id,
+                        'amount' => floatval($row[2]),
+                    ],
+                ],
+            ];
+        }, $data);
+
+        return response()->json($transactions);
     }
 }

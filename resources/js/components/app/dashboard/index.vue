@@ -75,7 +75,7 @@
       </div>
       <div class="col-lg-6">
         <div class="card-style">
-          <TransactionForm @submitted="refreshDashboard" />
+          <Transactions @submitted="refreshDashboard" per-page="5" />
         </div>
       </div>
     </div>
@@ -94,13 +94,13 @@ import {
   LinearScale,
   PointElement,
 } from 'chart.js';
-import TransactionForm from '@/components/app/transactions/TransactionForm.vue';
+import Transactions from '@/components/app/transactions/index.vue';
 import axios from 'axios';
 
 ChartJS.register(Title, Tooltip, Legend, LineElement, CategoryScale, LinearScale, PointElement);
 
 export default {
-  components: { TransactionForm, Line },
+  components: { Transactions, Line },
   data() {
     return {
       totalExpense: 0,

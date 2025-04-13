@@ -6,7 +6,10 @@ const routes = [
   { path: '/', redirect: '/app/dashboard' },
   { path: '/app', redirect: '/app/dashboard' },
   { path: '/app/dashboard', component: Dashboard },
+  // transactions:
   { path: '/app/transactions', component: Transactions },
+  { path: '/app/transactions/new', component: Transactions },
+  { path: '/app/transactions/:transaction_id', component: Transactions },
 ];
 
 const router = createRouter({

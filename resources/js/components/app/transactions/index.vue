@@ -5,21 +5,20 @@
         <div class="row">
           <div class="col-lg-12">
             <TransactionForm 
+              v-if="transaction_id !== null"
               @update:modelValue="upsertTransaction"
               @delete="deleteTransaction"
+              @close="backToList"
               :transaction_id="transaction_id"
-
             />
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-lg-12">
-            <TransactionsList 
+            <TransactionsList
+              v-if="transaction_id === null"
               @open="editTransaction"
+              @delete="deleteTransaction"
               v-model="transactions"
             />
           </div>
-        </div>    
+        </div>   
       </div>
     </div>
   </div>
@@ -38,10 +37,29 @@ export default {
       transaction_id: null,
     }
   },
+  mounted() {
+    this.getTransactionidFromRouter();
+  },
+  watch: {
+    $route(to, from) {
+      this.getTransactionidFromRouter();
+    }
+  },
   methods: {
+    backToList() {
+      this.$router.push({ path: '/app/transactions' });
+    },
+    getTransactionidFromRouter() {
+     if (this.$route.params.transaction_id) {
+        this.transaction_id = this.$route.params.transaction_id;
+      }
+     else {
+        this.transaction_id = null;
+      }
+    },
+
     editTransaction(id) {
-      alert('editTransaction', id);
-      this.transaction_id = id;
+      this.$router.push({ path: `/app/transactions/${id}` });
     },
     addTransaction() {
       this.transaction_id = null;
@@ -56,10 +74,10 @@ export default {
       }
     },
     deleteTransaction(id) {
+      alert('delete transaction ' + id);
       this.transactions = this.transactions.filter(t => t.id !== id);
     },
     updateTransactions(transactions) {
-      alert('updateTransactions', transactions);
       this.transactions = transactions;
     },
   }

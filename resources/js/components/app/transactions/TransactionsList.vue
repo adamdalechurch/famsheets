@@ -5,6 +5,7 @@
       v-model="localTransactions"
       :columns="columns"
       @open="openTransaction"
+      @delete-index="deleteTransactionByIndex"
       show-open
     />
     <br />
@@ -83,7 +84,7 @@ export default {
       });
     },
     openTransaction(transaction) {
-      this.$emit('open', transaction);
+      this.$emit('open', transaction.id);
     },
   },
 };

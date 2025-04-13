@@ -83,6 +83,7 @@ export default {
       const updated = [...this.modelValue];
       updated.splice(index, 1);
       this.$emit("update:modelValue", updated);
+      this.$emit("delete-index", index);
     },
     isEditing(rowIndex, key) {
       return this.editingCell?.rowIndex === rowIndex && this.editingCell?.key === key;

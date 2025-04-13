@@ -1,6 +1,7 @@
 <template>
   <div>
-    <h2>New Transaction</h2>
+    <button @click="close"><<</button>
+    <h2>Transaction</h2>
     <form @submit.prevent="submitTransaction">
       <div class="input-style-1">
         <label>Description</label>
@@ -25,7 +26,7 @@
         <input type="checkbox" v-model="transaction.recurring" />
       </div>
    
-      <TransactionItems v-model="transaction.items" />
+      <TransactionItems v-model="transaction.transaction_items" />
 
       <br />
 
@@ -41,20 +42,22 @@ import TransactionItems from './TransactionItems.vue';
 import AutoCompleteInput from '@/components/common/AutoCompleteInput.vue';
 import axios from 'axios';
 
+const TRANSACTION_BLANK = {
+  description: '',
+  total: 0,
+  is_income: false,
+  recurring: false,
+  transaction_schedule_id: null,
+  income_source_id: null,
+  transaction_date: new Date().toISOString().split('T')[0],
+  items: [{ category_id: null, description: '', amount: 0 }],
+};
+
 export default {
   components: { DescriptionEdit, CategoryEdit, AutoCompleteInput, TransactionItems },
   data() {
     return {
-      transaction: {
-        description: '',
-        total: 0,
-        is_income: false,
-        recurring: false,
-        transaction_schedule_id: null,
-        income_source_id: null,
-        transaction_date: new Date().toISOString().split('T')[0],
-        items: [{ category_id: null, description: '', amount: 0 }],
-      },
+      transaction: TRANSACTION_BLANK,
     };
   },
   props: {
@@ -71,23 +74,39 @@ export default {
           axios.get(`/api/transactions/${val}`).then(res => {
             this.transaction = res.data;
           });
+        } else {
+          this.transaction = TRANSACTION_BLANK;
         }
       },
     },
   },
   methods: {
     addItem() {
-      this.transaction.items.push({ category_id: null, description: '', amount: 0 });
+      this.transaction.transaction_items.push({ category_id: null, description: '', amount: 0 });
     },
     removeItem(index) {
-      this.transaction.items.splice(index, 1);
+      this.transaction.transaction_items.splice(index, 1);
     },
     submitTransaction() {
-      axios.post('/api/transactions', this.transaction).then(res => {
-        alert('Transaction added!');
-        // Reset form
-        // .. abridged
-      });
+      // axios.post('/api/transactions', this.transaction).then(res => {
+      //   alert('Transaction added!');
+      //   // Reset form
+      //   // .. abridged
+      // });
+      if(this.transaction_id) {
+        axios.put(`/api/transactions/${this.transaction_id}`, this.transaction).then(res => {
+          alert('Transaction updated!');
+          this.$emit('update:modelValue', res.data);
+        });
+      } else {
+        axios.post('/api/transactions', this.transaction).then(res => {
+          alert('Transaction added!');
+          this.$emit('update:modelValue', res.data);
+        });
+      }
+    },
+    close() {
+      this.$emit('close');
     },
   },
 };

@@ -9,6 +9,7 @@ use App\Http\Controllers\IncomeSourceCategoryController;
 use App\Http\Controllers\UserGroupController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DebugController;
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout']);
@@ -45,4 +46,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('user-groups', UserGroupController::class);
 
     Route::get('/user', [AuthController::class, 'user']);
+
+    Route::apiResource('debug', DebugController::class);
 });

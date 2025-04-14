@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2>All Transactions</h2>
+    <h2>All Transactions</h2> 
     <!-- csv upload -->
     <!-- <input type="file" @change="uploadCsv" accept=".csv" /> -->
     <div class="row">
@@ -40,12 +40,11 @@
 
 <script>
 import EditableGrid from '@/components/common/EditableGrid.vue';
-import DescriptionEdit from '@/components/common/DescriptionEdit.vue';
 import axios from 'axios';
 
 export default {
   name: 'TransactionsList',
-  components: { EditableGrid, DescriptionEdit },
+  components: { EditableGrid },
   data() {
     return {
       localTransactions: [],
@@ -53,7 +52,7 @@ export default {
         {
           label: 'Description',
           key: 'description',
-          editor: DescriptionEdit,
+          type: 'text',
         },
         {
           label: 'Total',

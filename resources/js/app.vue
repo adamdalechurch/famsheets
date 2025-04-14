@@ -30,11 +30,24 @@
             </router-link>
           </li>
           <li class="nav-item">
+            <router-link to="/app/budgets">
+              <span class="icon"><i class="lni lni-coin"></i></span>
+              <span class="text">Budgets</span>
+            </router-link>
+          </li>
+          <li class="nav-item">
+            <router-link to="/app/categories">
+              <span class="icon"><i class="lni lni-tag"></i></span>
+              <span class="text">Categories</span>
+            </router-link>
+          </li>
+          <li class="nav-item">
             <router-link to="/app/debug">
               <span class="icon"><i class="lni lni-cog"></i></span>
               <span class="text">Debug</span>
             </router-link>
           </li>
+   
           <!-- <li class="nav-item nav-item-has-children">
             <a
               href="#0"

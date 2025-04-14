@@ -5,7 +5,8 @@
     <form @submit.prevent="submitTransaction">
       <div class="input-style-1">
         <label>Description</label>
-        <DescriptionEdit v-model="transaction.description" />
+        <!-- <DescriptionEdit v-model="transaction.description" /> -->
+        <input v-model="transaction.description" type="text" required />
       </div>
       <div class="input-style-1">
         <label>Total</label>
@@ -36,7 +37,6 @@
 </template>
 
 <script>
-import DescriptionEdit from '@/components/common/DescriptionEdit.vue';
 import CategoryEdit from '@/components/common/CategoryEdit.vue';
 import TransactionItems from './TransactionItems.vue';
 import AutoCompleteInput from '@/components/common/AutoCompleteInput.vue';
@@ -54,7 +54,7 @@ const TRANSACTION_BLANK = {
 };
 
 export default {
-  components: { DescriptionEdit, CategoryEdit, AutoCompleteInput, TransactionItems },
+  components: { CategoryEdit, AutoCompleteInput, TransactionItems },
   data() {
     return {
       transaction: TRANSACTION_BLANK,

@@ -1,9 +1,9 @@
 <template>
   <div>
-    <h2>Budget</h2> 
+    <h2>Categories</h2> 
 
     <EditableGrid
-      v-model="budgets"
+      v-model="categories"
       :columns="columns"
       show-open="false"
     />
@@ -30,15 +30,15 @@ import EditableGrid from '@/components/common/EditableGrid.vue';
 import axios from 'axios';
 
 export default {
-  name: 'DebugText',
+  name: 'Categories',
   components: { EditableGrid },
   data() {
     return {
-      debugText: [],
+      categories: [],
       columns: [
         {
-          label: 'Text',
-          key: 'text',
+          label: 'Name',
+          key: 'name',
           type: 'text',
         },
         
@@ -57,36 +57,19 @@ export default {
     },
   },
   created() {
-    this.loadDebugText();
+    this.loadCategories();
  },
   methods: {
-    loadDebugText() {
-      axios.get('/api/debug-text').then((res) => {
-        this.localTransactions = res.data;
+    
+    loadCategories() {
+      axios.get('/api/categories').then((res) => {
+        this.categories = res.data;
       });
     },
-    nextPage() {
-      if (this.pagination.page < this.totalPages) {
-        this.pagination.page++;
-        this.loadTransactions();
-      }
-    },
-    prevPage() {
-      if (this.pagination.page > 1) {
-        this.pagination.page--;
-        this.loadTransactions();
-      }
-    },
-    firstPage() {
-      this.pagination.page = 1;
-      this.loadTransactions();
-    },
-    lastPage() {
-      this.pagination.page = this.totalPages;
-      this.loadTransactions();
-    },
-    newTransaction() {
-      this.openTransaction({id: null});
+    saveChanges() {
+      axios.post('/api/categories', this.localTransactions).then((res) => {
+        this.categories = res.data;
+      });
     },
   },
 };

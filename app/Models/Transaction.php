@@ -13,7 +13,7 @@ class Transaction extends Model
         'user_id',
         'user_group_id',
         'description',
-        'total',
+        // 'total',
         'is_income',
         'recurring',
         'transaction_schedule_id',
@@ -50,5 +50,10 @@ class Transaction extends Model
     public function transactionItems()
     {
         return $this->hasMany(TransactionItem::class);
+    }
+
+    public function getTotalAttribute()
+    {
+        return $this->transactionItems->sum('amount');
     }
 }

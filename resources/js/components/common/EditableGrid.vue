@@ -18,7 +18,7 @@
               />
               <template v-else>
                 <input
-                  v-if="isEditing(rowIndex, column.key) || !row[column.key] || column.type === 'checkbox'"
+                  v-if="showInput(row, column, rowIndex)"
                   v-model="row[column.key]"
                   :type="column.type || 'text'"
                   step="0.01"
@@ -72,7 +72,11 @@ export default {
       editingCell: null,
     };
   },
+   
   methods: {
+    showInput(row, column, rowIndex) {
+      return (this.isEditing(rowIndex, column.key) || !row[column.key] || column.type === 'checkbox') && !column.readonly;
+    },
     inputClass(colKey) {
       const type = this.columns.find((col) => col.key === colKey)?.type || "text";
 

@@ -58,6 +58,7 @@ export default {
           label: 'Total',
           key: 'total',
           type: 'number',
+          readonly: true,
           placeholder: '0.00',
         },
         {
@@ -110,7 +111,9 @@ export default {
       set(value) {
         this.localTransactions = value.map((transaction) => ({
           ...transaction,
-          transaction_date: new Date(transaction.transaction_date).toISOString(),
+          transaction_date: transaction.transaction_date ? 
+            new Date(transaction.transaction_date).toISOString().split('T')[0] : 
+            new Date().toISOString().split('T')[0],
         }));
       },
     },

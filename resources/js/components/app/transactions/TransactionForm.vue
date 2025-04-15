@@ -8,23 +8,24 @@
         <!-- <DescriptionEdit v-model="transaction.description" /> -->
         <input v-model="transaction.description" type="text" required />
       </div>
+
+      <div class="input-style-1">
+        <label>Transaction Date</label>
+        <input v-model="transaction.transaction_date" type="date" required />
+      </div>
+      <div class="input-style-1 col-lg-2">
+        <label>Is Income</label>
+        <input type="checkbox" v-model="transaction.is_income" />
+      </div>
+      <div class="input-style-1 col-lg-2">
+        <label>Recurring</label>
+        <input type="checkbox" v-model="transaction.recurring" />
+      </div>
       <div class="input-style-1">
         <label>Total</label>
         <!-- <input v-model="transaction.total" type="number" required /> -->
         <!-- 2 decimal places: -->
         <input v-model.number="transaction.total" type="number" step="0.01" required />
-      </div>
-      <div class="input-style-1">
-        <label>Transaction Date</label>
-        <input v-model="transaction.transaction_date" type="date" required />
-      </div>
-      <div class="input-style-1">
-        <label>Is Income</label>
-        <input type="checkbox" v-model="transaction.is_income" />
-      </div>
-      <div class="input-style-1">
-        <label>Recurring</label>
-        <input type="checkbox" v-model="transaction.recurring" />
       </div>
    
       <TransactionItems v-model="transaction.transaction_items" />
@@ -44,7 +45,6 @@ import axios from 'axios';
 
 const TRANSACTION_BLANK = {
   description: '',
-  total: 0,
   is_income: false,
   recurring: false,
   transaction_schedule_id: null,

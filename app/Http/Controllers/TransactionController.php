@@ -14,6 +14,13 @@ use App\Services\Transaction\TransactionService;
 
 class TransactionController extends Controller
 {
+    protected $transactionService;
+
+    public function __construct(TransactionService $transactionService)
+    {
+        $this->transactionService = $transactionService;
+    }
+
     public function index(Request $request)
     {
         $query = Transaction::with(['transactionItems.category']);

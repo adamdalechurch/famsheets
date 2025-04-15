@@ -1,11 +1,8 @@
 <template>
-  <div class="col-lg-6">
+  <div class="col-lg-6 auth">
     <div class="signin-wrapper">
       <div class="form-wrapper">
         <h6 class="mb-15">Sign In Form</h6>
-        <p class="text-sm mb-25">
-          Start creating the best possible user experience for your customers.
-        </p>
         <form @submit.prevent="signIn">
           <div class="row">
             <div class="col-12">

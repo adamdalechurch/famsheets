@@ -31,7 +31,7 @@
 
       <br />
 
-      <button type="submit">Submit Transaction</button>
+      <button class="btn btn-sm btn-primary" type="submit">Submit Transaction</button>
     </form>
   </div>
 </template>

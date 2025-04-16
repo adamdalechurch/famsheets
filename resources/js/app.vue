@@ -11,7 +11,9 @@
     <!-- Sidebar -->
     <aside class="sidebar-nav-wrapper">
       <div class="navbar-logo">
-        <Logo />
+        <router-link to="/">
+          <img src="assets/images/logo/logo.svg" />
+        </router-link>
       </div>
       <nav class="sidebar-nav">
         <ul>
@@ -221,13 +223,8 @@
 </template>
 
 <script>
-
-import Logo from '@/components/common/Logo.vue';
 export default {
   name: 'App',
-  components: {
-    Logo,
-  },
 };
 </script>
 

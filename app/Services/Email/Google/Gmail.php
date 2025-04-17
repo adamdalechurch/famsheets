@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Email;
+namespace App\Services\Email\Google;
 
 use Google\Client as Google_Client;
 use Google\Service\Gmail as Google_Service_Gmail;

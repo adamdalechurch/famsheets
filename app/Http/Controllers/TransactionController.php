@@ -8,7 +8,7 @@ use App\Http\Requests\StoreTransactionRequest;
 use App\Http\Requests\UpdateTransactionRequest;
 use App\Http\Requests\BulkUpdateTransactionRequest;
 use Illuminate\Http\Request;
-use App\Services\Email\Gmail;
+use App\Services\Email\Google\Gmail;
 use App\Services\CSV\NFCU;
 use App\Services\Transaction\TransactionService;
 
@@ -89,7 +89,7 @@ class TransactionController extends Controller
 
     public function importBankEmails()
     {
-        (new Gmail)->getBankEmails();
+        (new Gmail)->import_bank_emails();
         return response()->json(['status' => 'Import complete']);
     }
 }

@@ -38,6 +38,7 @@ public function import_bank_emails()
         if (!$bodyData) continue;
 
         $decoded = base64_decode(strtr($bodyData, '-_', '+/'));
+        DebugText::create(['text' => json_encode($decoded)]);
 
         $transaction = $this->parseEmailToTransaction($decoded);
 
@@ -53,14 +54,15 @@ public function import_bank_emails()
 public function parseEmailToTransaction($emailBody)
 {
     // Customize parsing based on your bank's email format
-    preg_match('/Amount: \$([0-9,.]+)/', $emailBody, $amountMatch);
-    preg_match('/Date: (\d{2}\/\d{2}\/\d{4})/', $emailBody, $dateMatch);
-    preg_match('/Description: (.*)/', $emailBody, $descMatch);
+    preg_match('/Transaction for \$([0-9,.]+)/', $emailBody, $amountMatch);
+    // preg_match('/Date: (\d{2}\/\d{2}\/\d{4})/', $emailBody, $dateMatch);
+    preg_match('/on (\d{2}\/\d{2}\/\d{2})/', $emailBody, $dateMatch);
+    preg_match('/debit card \d{4} at (.*)/', $emailBody, $descMatch);
 
     if (!$amountMatch || !$dateMatch || !$descMatch) return null;
 
     $amount = floatval(str_replace(',', '', $amountMatch[1]));
-    $date = \Carbon\Carbon::createFromFormat('m/d/Y', $dateMatch[1])->format('Y-m-d');
+    $date = \Carbon\Carbon::createFromFormat('m/d/y', $dateMatch[1])->format('Y-m-d');
     $description = trim($descMatch[1]);
 
     $category = \App\Models\Category::firstOrCreate(['name' => 'Bank Import']);

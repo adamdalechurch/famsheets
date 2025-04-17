@@ -13,7 +13,6 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('user_group_id')->nullable()->constrained()->onDelete('cascade');
             $table->string('description');
-            $table->decimal('total', 10, 2);
             $table->boolean('is_income')->default(false);
             $table->boolean('recurring')->default(false);
             // $table->foreignId('transaction_schedule_id')->nullable()->constrained('transaction_schedule')->onDelete('cascade');

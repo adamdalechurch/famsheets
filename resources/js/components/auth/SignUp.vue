@@ -1,5 +1,5 @@
 <template>
-  <div class="col-lg-6">
+  <div class="col-lg-6 auth">
     <div class="signup-wrapper">
       <div class="form-wrapper">
         <h6 class="mb-15">Sign Up Form</h6>

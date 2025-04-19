@@ -1,6 +1,7 @@
 <template>
   <div>
     <h2>All Budgets</h2>
+    <button class="btn btn-primary mb-3" @click="createSmartBudget">Create Smart Budget</button>
     <EditableGrid
       v-model="formattedBudgets"
       :columns="columns"
@@ -123,6 +124,15 @@ export default {
       this.pagination.page = this.totalPages;
       this.loadBudgets();
     },
+   createSmartBudget() {
+    axios.post('/api/budgets/create-smart-budget').then(res => {
+      this.loadBudgets();
+    }).catch(err => {
+      console.error(err);
+      alert('Failed to create smart budget.');
+    });
   },
+  },
+
 };
 </script>

@@ -16,6 +16,10 @@
         <input v-model="budget.end_date" type="date" required />
       </div>
 
+      <div class="input-style-1">
+        <label>Budget Items</label>
+        <input v-model="total" type="number" disabled />
+      </div>
       <BudgetItems v-model="budget.budget_items" />
       <br />
 
@@ -60,6 +64,11 @@ export default {
           this.budget = BUDGET_BLANK;
         }
       },
+    },
+  },
+  computed: {
+    total() {
+      return this.budget.budget_items.reduce((acc, item) => acc + parseFloat(item.amount || 0), 0);
     },
   },
   methods: {

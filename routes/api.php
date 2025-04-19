@@ -21,6 +21,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // dashboard routes
     Route::get('/dashboard-stats', [DashboardController::class, 'index']);
     Route::get('/dashboard-chart', [DashboardController::class, 'chartData']);
+    Route::get('/budget-report', [DashboardController::class, 'budgetReport']);
 
     // Transaction Routes
     Route::apiResource('transactions', TransactionController::class);
@@ -50,6 +51,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('budgets', BudgetController::class);
 
     Route::post('/budgets/bulk-update', [BudgetController::class, 'bulkUpdate']);
+    Route::post('/budgets/create-smart-budget', [BudgetController::class, 'createSmartBudget']);
 
     Route::get('/user', [AuthController::class, 'user']);
 

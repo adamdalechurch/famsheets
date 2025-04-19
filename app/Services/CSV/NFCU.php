@@ -18,7 +18,7 @@ class NFCU
         });
         // map to array of transactions
         $transactions = array_map(function ($row) {
-        $existing_category = \App\Models\Category::where('name', $row[10])->first();
+        $existing_category = \App\Models\Category::where('name', $row[11])->first();
 
         $category_id = $existing_category ? $existing_category->id : null;
         if (!$category_id) {

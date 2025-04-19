@@ -29,8 +29,7 @@
           </div>
         </div>
       </div>
-
-      <!-- Income Card -->
+     <!-- Income Card -->
       <div class="col-xl-3 col-lg-4 col-sm-6">
         <div class="icon-card mb-30">
           <div class="icon green"><i class="lni lni-coin"></i></div>
@@ -44,6 +43,47 @@
           </div>
         </div>
       </div>
+    </div>
+
+    <div class="row">
+      <!-- Budget Expense Table -->
+  <!-- Budget Breakdown Table -->
+    <div class="card-style mb-30">
+      <h6 class="text-medium mb-10">Budget Breakdown</h6>
+      <div v-for="budget in budgets" :key="budget.id" class="mb-4">
+        <h6 class="text-bold">{{ budget.name }} ({{ budget.start_date }} - {{ budget.end_date }})</h6>
+        <div class="table-responsive">
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>Category</th>
+                <th>Budgeted</th>
+                <th>Spent</th>
+                <th>Remaining</th>
+                <th>Usage</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="item in budget.items" :key="item.category_id">
+                <td>{{ item.category_name }}</td>
+                <td>{{ formatCurrency(item.budgeted) }}</td>
+                <td>{{ formatCurrency(item.spent) }}</td>
+                <td>{{ formatCurrency(item.budgeted - item.spent) }}</td>
+                <td>
+                  <div class="progress" style="height: 8px;">
+                    <div class="progress-bar bg-primary" role="progressbar"
+                      :style="{ width: item.usage + '%' }"
+                      :aria-valuenow="item.usage" aria-valuemin="0" aria-valuemax="100">
+                    </div>
+                  </div>
+                  <small>{{ formatPercentage(item.usage) }}</small>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
     </div>
 
     <!-- Chart Area -->
@@ -103,6 +143,7 @@ export default {
   components: { Transactions, Line },
   data() {
     return {
+      budgets: [],
       totalExpense: 0,
       totalIncome: 0,
       monthlyTotal: 0,
@@ -118,7 +159,7 @@ export default {
   mounted() {
     this.loadDashboardStats();
     this.loadChart();
-
+    this.loadBudgets();
     setInterval(this.updateTime, 1000);
   },
   watch: {
@@ -138,6 +179,17 @@ export default {
     updateTime() {
       this.currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     },
+    loadBudgets() {
+    axios.get('/api/budget-report').then(res => {
+      this.budgets = res.data.map(budget => {
+        budget.items = budget.items.map(item => {
+          const usage = item.budgeted > 0 ? (item.spent / item.budgeted) * 100 : 0;
+          return { ...item, usage };
+        });
+        return budget;
+      });
+    });
+  },
     loadChart() {
       axios
         .get(`/api/dashboard-chart?frequency=${this.summaryFrequency.toLowerCase()}`)
@@ -161,6 +213,12 @@ export default {
     refreshDashboard() {
       this.loadDashboardStats();
       this.loadChart();
+    },
+    formatCurrency(value) {
+      return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
+    },
+    formatPercentage(value) {
+      return new Intl.NumberFormat('en-US', { style: 'percent', minimumFractionDigits: 2 }).format(value / 100);
     },
   },
   computed: {

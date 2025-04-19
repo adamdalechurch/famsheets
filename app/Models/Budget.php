@@ -26,4 +26,9 @@ class Budget extends Model
     {
         return $this->hasMany(BudgetItem::class);
     }
+
+    public function getTotalAttribute()
+    {
+        return $this->budgetItems()->sum('amount');
+    }
 }

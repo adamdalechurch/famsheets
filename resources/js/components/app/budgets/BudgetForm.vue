@@ -4,8 +4,8 @@
     <h2>Budget</h2>
     <form @submit.prevent="submitBudget">
       <div class="input-style-1">
-        <label>Title</label>
-        <input v-model="budget.title" type="text" required />
+        <label>Name</label>
+        <input v-model="budget.name" type="text" required />
       </div>
       <div class="input-style-1">
         <label>Start Date</label>
@@ -29,7 +29,7 @@ import BudgetItems from './BudgetItems.vue';
 import axios from 'axios';
 
 const BUDGET_BLANK = {
-  title: '',
+  name: '',
   start_date: new Date().toISOString().split('T')[0],
   end_date: '',
   budget_items: [],

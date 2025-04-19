@@ -38,14 +38,8 @@ export default {
           editor: CategoryEdit 
         },
         {
-          label: "Planned Amount",
-          key: "planned",
-          type: "number",
-          placeholder: "0.00",
-        },
-        {
-          label: "Actual Amount",
-          key: "actual",
+          label: "Amount",
+          key: "amount",
           type: "number",
           placeholder: "0.00",
         },

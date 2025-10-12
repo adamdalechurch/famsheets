@@ -36,10 +36,9 @@
 
 <script>
 import CategoryEdit from '@/components/common/CategoryEdit.vue';
-import TransactionItems from './TransactionItems.vue';
 import AutoCompleteInput from '@/components/common/AutoCompleteInput.vue';
 import axios from 'axios';
-
+ 
 const TRANSACTION_BLANK = {
   description: '',
   is_income: false,
@@ -52,7 +51,7 @@ const TRANSACTION_BLANK = {
 };
 
 export default {
-  components: { CategoryEdit, AutoCompleteInput, TransactionItems },
+  components: { CategoryEdit, AutoCompleteInput },
   data() {
     return {
       transaction: TRANSACTION_BLANK,
@@ -79,12 +78,6 @@ export default {
     },
   },
   methods: {
-    addItem() {
-      this.transaction.transaction_items.push({ category_id: null, description: '', amount: 0 });
-    },
-    removeItem(index) {
-      this.transaction.transaction_items.splice(index, 1);
-    },
     submitTransaction() {
       // axios.post('/api/transactions', this.transaction).then(res => {
       //   alert('Transaction added!');

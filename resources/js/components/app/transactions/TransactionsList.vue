@@ -41,6 +41,7 @@
 <script>
 import EditableGrid from '@/components/common/EditableGrid.vue';
 import axios from 'axios';
+import CategoryEdit from '@/components/common/CategoryEdit.vue';
 
 export default {
   name: 'TransactionsList',
@@ -55,10 +56,9 @@ export default {
           type: 'text',
         },
         {
-          label: 'Total',
-          key: 'total',
+          label: 'Amount',
+          key: 'amount',
           type: 'number',
-          readonly: true,
           placeholder: '0.00',
         },
         // categories:
@@ -66,6 +66,13 @@ export default {
         //   label: 'Categories',
         //   key: 'categories'
         // },
+        {
+          label: 'Category',
+          key: 'category_id',
+          type: 'number',
+          placeholder: 'Category ID',
+          editor: CategoryEdit
+        },    
         {
           label: 'Date',
           key: 'transaction_date',

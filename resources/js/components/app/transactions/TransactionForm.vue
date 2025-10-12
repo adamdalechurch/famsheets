@@ -22,14 +22,11 @@
         <input type="checkbox" v-model="transaction.recurring" />
       </div>
       <div class="input-style-1">
-        <label>Total</label>
+        <label>Amount</label>
         <!-- <input v-model="transaction.total" type="number" required /> -->
         <!-- 2 decimal places: -->
-        <input v-model.number="transaction.total" type="number" step="0.01" required />
+        <input v-model.number="transaction.amount" type="number" step="0.01" required />
       </div>
-   
-      <TransactionItems v-model="transaction.transaction_items" />
-
       <br />
 
       <button class="btn btn-sm btn-primary" type="submit">Submit Transaction</button>
@@ -50,7 +47,8 @@ const TRANSACTION_BLANK = {
   transaction_schedule_id: null,
   income_source_id: null,
   transaction_date: new Date().toISOString().split('T')[0],
-  items: [{ category_id: null, description: '', amount: 0 }],
+  amount: 0,
+  category_id: null,
 };
 
 export default {

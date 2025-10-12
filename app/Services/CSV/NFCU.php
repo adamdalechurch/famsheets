@@ -28,16 +28,12 @@ class NFCU
 
             return [
                 'transaction_date' => \Carbon\Carbon::createFromFormat('m/d/Y', $row[1])->format('Y-m-d'),
-                'total' => floatval($row[2]),
+                'amount' => floatval($row[2]),
                 'is_income' => ($row[3] == 'Credit') ? 1 : 0,
                 'description' => $row[10] == "" ? "Unknown" : $row[10],
                 'user_id' => Auth::id(),
-                'transaction_items' => [
-                    [
-                        'category_id' => $category_id,
-                        'amount' => floatval($row[2]),
-                    ],
-                ],
+                'category_id' => $category_id,
+                'recurring' => false,
             ];
         }, $data);
 

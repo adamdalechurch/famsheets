@@ -13,13 +13,12 @@ class DashboardController extends Controller
         $end = now()->endOfMonth();
 
         $totals = DB::table('transactions')
-            ->join('transaction_items', 'transactions.id', '=', 'transaction_items.transaction_id')
             ->selectRaw('
-                SUM(CASE WHEN transactions.is_income = 1 THEN transaction_items.amount ELSE 0 END) as total_income,
-                SUM(CASE WHEN transactions.is_income = 0 THEN transaction_items.amount ELSE 0 END) as total_expense,
+                SUM(CASE WHEN transactions.is_income = 1 THEN amount ELSE 0 END) as total_income,
+                SUM(CASE WHEN transactions.is_income = 0 THEN amount ELSE 0 END) as total_expense,
                 SUM(CASE 
                     WHEN transactions.transaction_date BETWEEN ? AND ? 
-                    THEN transaction_items.amount ELSE 0 END) as monthly_total
+                    THEN amount ELSE 0 END) as monthly_total
             ', [$start, $end])
             ->first();
 
@@ -61,8 +60,7 @@ class DashboardController extends Controller
     private function aggregateTransactionData($groupColumn, $labelFormatter)
     {
         return DB::table('transactions')
-            ->join('transaction_items', 'transactions.id', '=', 'transaction_items.transaction_id')
-            ->selectRaw("{$groupColumn} as label_key, SUM(transaction_items.amount) as total")
+            ->selectRaw("{$groupColumn} as label_key, SUM(amount) as total")
             ->groupBy('label_key')
             ->orderBy('label_key')
             ->get()
@@ -102,14 +100,12 @@ public function budgetReport(Request $request)
         // Skip if no overlap
         if ($overlapMonths === 0) continue;
 
-        $spendingSubquery = DB::table('transaction_items')
-    ->join('transactions', 'transaction_items.transaction_id', '=', 'transactions.id')
-    ->whereBetween('transactions.transaction_date', [$rangeStart->toDateString(), $rangeEnd->toDateString()])
+        $spendingSubquery = DB::table('transactions')
+    ->whereBetween('transaction_date', [$rangeStart->toDateString(), $rangeEnd->toDateString()])
     ->select(
-        'transaction_items.category_id',
-        DB::raw('SUM(transaction_items.amount) as spent')
+        DB::raw('SUM(amount) as spent')
     )
-    ->groupBy('transaction_items.category_id');
+    ->groupBy('category_id');
 
 $items = DB::table('budget_items')
     ->join('categories', 'budget_items.category_id', '=', 'categories.id')

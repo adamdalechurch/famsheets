@@ -116,19 +116,12 @@ public function createSmartBudget()
     $startDate = Carbon::now()->subMonths(12)->startOfMonth();
     $endDate = Carbon::now()->subMonth()->endOfMonth();
 
-    // Get average monthly income
-    // $monthlyIncome = DB::table('transactions')
-    //     ->join('transaction_items as ti', 't.id', '=', 'ti.transaction_id')
-    //     ->where('ti.amount', '>', 0) // Income is positive
-    //     ->select(DB::raw('SUM(ti.amount) / 3 as avg_income'))
-    //     ->value('avg_income') ?? 0;
 $monthlyIncomeObj = DB::table('transactions')
-    ->join('transaction_items', 'transactions.id', '=', 'transaction_items.transaction_id')
     ->where('transactions.user_id', $userId)
     ->where('transactions.is_income', true)
     ->whereBetween('transactions.transaction_date', [$startDate, now()])
     ->groupBy('transactions.user_id')
-    ->select(DB::raw('SUM(transaction_items.amount) / 12 as avg_income'))
+    ->select(DB::raw('SUM(amount) / 12 as avg_income'))
     ->first();
 
     $monthlyIncome = $monthlyIncomeObj ? (float) $monthlyIncomeObj->avg_income : 0;
@@ -138,13 +131,12 @@ $monthlyIncomeObj = DB::table('transactions')
     }
 
     // Get average monthly expenses by category
-    $categoryAverages = DB::table('transaction_items as ti')
-        ->join('transactions as t', 'ti.transaction_id', '=', 't.id')
-        ->whereBetween('t.transaction_date', [$startDate, $endDate])
-        ->where('t.user_id', $userId)
-        ->where('t.is_income', false)
-        ->groupBy('ti.category_id')
-        ->select('ti.category_id', DB::raw('ABS(SUM(ti.amount) / 12) as monthly_average'))
+    $categoryAverages = DB::table('transactions')
+        ->whereBetween('transaction_date', [$startDate, $endDate])
+        ->where('user_id', $userId)
+        ->where('is_income', false)
+        ->groupBy('category_id')
+        ->select('category_id', DB::raw('ABS(SUM(amount) / 12) as monthly_average'))
         ->get();
 
     if ($categoryAverages->isEmpty()) {

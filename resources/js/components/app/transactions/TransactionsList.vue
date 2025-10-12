@@ -61,6 +61,11 @@ export default {
           readonly: true,
           placeholder: '0.00',
         },
+        // categories:
+        // {
+        //   label: 'Categories',
+        //   key: 'categories'
+        // },
         {
           label: 'Date',
           key: 'transaction_date',
@@ -106,6 +111,7 @@ export default {
         return this.localTransactions.map((transaction) => ({
           ...transaction,
           transaction_date: new Date(transaction.transaction_date).toLocaleDateString(),
+          // categories: transaction.transaction_items.map(item => item.category.name).join(', '),
         }));
       },
       set(value) {

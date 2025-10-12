@@ -14,13 +14,11 @@ class BulkUpdateTransactionRequest extends FormRequest
         return [
             'transactions' => 'required|array',
             'transactions.*.description' => 'sometimes|string|max:255',
-            'transactions.*.total' => 'sometimes|numeric',
+            'transactions.*.amount' => 'sometimes|numeric',
             'transactions.*.is_income' => 'sometimes|boolean',
             'transactions.*.recurring' => 'sometimes|boolean',
             'transactions.*.transaction_date' => 'sometimes|date',
-            'transactions.*.transaction_items' => 'sometimes|array',
-            'transactions.*.transaction_items.*.category_id' => 'required_with:transaction_items|exists:categories,id',
-            'transactions.*.transaction_items.*.amount' => 'required_with:transaction_items|numeric|min:0',
+            'transactions.*.category_id' => 'sometimes|exists:categories,id',
         ];
     }
 }

@@ -45,9 +45,6 @@ public function import_bank_emails()
         if ($transaction) {
             $transaction['user_id'] = 1;
             $created = Transaction::create($transaction);
-            foreach ($transaction['transaction_items'] as $item) {
-                $created->transactionItems()->create($item);
-            }
         }
     }
 }
@@ -73,12 +70,8 @@ public function parseEmailToTransaction($emailBody)
         'is_income' => false, // or detect income from body
         'description' => $description,
         'recurring' => false,
-        'transaction_items' => [
-            [
-                'category_id' => $category->id,
-                'amount' => $amount,
-            ]
-        ],
+        'amount'  => $amount,
+        'category_id' => $category->id,
     ];
 }
 

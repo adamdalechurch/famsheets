@@ -14,9 +14,4 @@ class Category extends Model
     {
         return $this->hasMany(IncomeSource::class);
     }
-
-    public function transactionItems()
-    {
-        return $this->hasMany(TransactionItem::class);
-    }
 }

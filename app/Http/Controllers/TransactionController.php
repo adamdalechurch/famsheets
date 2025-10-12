@@ -23,7 +23,7 @@ class TransactionController extends Controller
 
     public function index(Request $request)
     {
-        $query = Transaction::with(['transactionItems.category']);
+        $query = Transaction::with(['category']);
 
         if ($request->boolean('paginate')) {
             return response()->json($query->paginate($request->input('per_page', 10)));
@@ -41,7 +41,7 @@ class TransactionController extends Controller
     public function show(Transaction $transaction)
     {
         return response()->json($transaction->load([
-            'transactionItems.category',
+            'category',
             'transactionSchedule',
             'incomeSource'
         ]));
@@ -68,10 +68,6 @@ class TransactionController extends Controller
 
             $transaction->save();
 
-            if (isset($data['transaction_items'])) {
-                $transaction->transactionItems()->delete();
-                $transaction->transactionItems()->createMany($data['transaction_items']);
-            }
         }
 
         return response()->json(['message' => 'Transactions updated successfully']);

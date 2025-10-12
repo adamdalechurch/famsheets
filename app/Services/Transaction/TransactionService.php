@@ -12,25 +12,13 @@ class TransactionService
         $data['user_id'] = Auth::id();
         $transaction = Transaction::create($data);
 
-        foreach ($data['transaction_items'] as $item) {
-            $transaction->transactionItems()->create($item);
-        }
-
-        return $transaction->load('transactionItems.category');
+        return $transaction->load('category');
     }
 
     public function update(Transaction $transaction, array $data): Transaction
     {
         $transaction->update(array_merge($data, ['user_id' => Auth::id()]));
 
-        if (isset($data['transaction_items'])) {
-            $transaction->transactionItems()->delete();
-
-            foreach ($data['transaction_items'] as $item) {
-                $transaction->transactionItems()->create($item);
-            }
-        }
-
-        return $transaction->load('transactionItems.category');
+        return $transaction->load('category');
     }
 }

@@ -13,12 +13,13 @@ class Transaction extends Model
         'user_id',
         'user_group_id',
         'description',
-        // 'total',
+        'amount',
         'is_income',
         'recurring',
         'transaction_schedule_id',
         'income_source_id',
         'transaction_date',
+        'category_id',
     ];
 
     protected $casts = [
@@ -46,14 +47,8 @@ class Transaction extends Model
     {
         return $this->belongsTo(IncomeSource::class);
     }
-
-    public function transactionItems()
+    public function category()
     {
-        return $this->hasMany(TransactionItem::class);
-    }
-
-    public function getTotalAttribute()
-    {
-        return $this->transactionItems->sum('amount');
+        return $this->belongsTo(Category::class);
     }
 }

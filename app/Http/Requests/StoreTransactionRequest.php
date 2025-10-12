@@ -13,13 +13,11 @@ class StoreTransactionRequest extends FormRequest
         return [
             'user_group_id' => 'nullable|exists:user_groups,id',
             'description' => 'required|string|max:255',
-            'total' => 'required|numeric',
+            'amount' => 'required|numeric',
             'is_income' => 'required|boolean',
             'recurring' => 'required|boolean',
             'transaction_date' => 'required|date',
-            'transaction_items' => 'required|array',
-            'transaction_items.*.category_id' => 'required|exists:categories,id',
-            'transaction_items.*.amount' => 'required|numeric|min:0',
+            'category_id' => 'nullable|exists:categories,id',
         ];
     }
 }

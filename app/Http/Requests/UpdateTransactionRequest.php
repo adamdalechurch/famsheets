@@ -12,13 +12,11 @@ class UpdateTransactionRequest extends FormRequest
     {
         return [
             'description' => 'sometimes|string|max:255',
-            'total' => 'sometimes|numeric',
+            'amount' => 'sometimes|numeric',
             'is_income' => 'sometimes|boolean',
             'recurring' => 'sometimes|boolean',
             'transaction_date' => 'sometimes|date',
-            'transaction_items' => 'sometimes|array',
-            'transaction_items.*.category_id' => 'required_with:transaction_items|exists:categories,id',
-            'transaction_items.*.amount' => 'required_with:transaction_items|numeric|min:0',
+            'category_id' => 'sometimes|exists:categories,id',
         ];
     }
 }

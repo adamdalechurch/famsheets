@@ -103,21 +103,22 @@ public function budgetReport(Request $request)
         $spendingSubquery = DB::table('transactions')
     ->whereBetween('transaction_date', [$rangeStart->toDateString(), $rangeEnd->toDateString()])
     ->select(
-        DB::raw('SUM(amount) as spent')
+        DB::raw('SUM(amount) as spent'),
+        'category_id'
     )
     ->groupBy('category_id');
 
 $items = DB::table('budget_items')
     ->join('categories', 'budget_items.category_id', '=', 'categories.id')
-    ->leftJoinSub($spendingSubquery, 'spending', function ($join) {
-        $join->on('budget_items.category_id', '=', 'spending.category_id');
+    ->leftJoinSub($spendingSubquery, 'transactions', function ($join) {
+        $join->on('budget_items.category_id', '=', 'transactions.category_id');
     })
     ->where('budget_items.budget_id', $budget->id)
     ->select(
         'budget_items.category_id',
         'categories.name as category_name',
         DB::raw('budget_items.amount * ' . $overlapMonths . ' as budgeted'),
-        DB::raw('COALESCE(spending.spent, 0) as spent')
+        DB::raw('COALESCE(transactions.spent, 0) as spent')
     )
     ->get();
 

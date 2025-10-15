@@ -65,7 +65,6 @@ class TransactionController extends Controller
             $transaction = isset($data['id']) 
                 ? Transaction::find($data['id'])->fill($data)
                 : new Transaction(array_merge($data, ['user_id' => Auth::id()]));
-
             $transaction->save();
 
         }

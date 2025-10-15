@@ -8,24 +8,25 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(row, rowIndex) in modelValue" :key="rowIndex">
+        <tr v-for="(row, rowIndex) in localRows" :key="rowIndex">
           <td class="min-width" v-for="column in columns" :key="column.key">
             <div class="input-style-1">
               <component
                 v-if="column.editor"
                 :is="column.editor"
-                v-model="row[column.key]"
+                v-model="localRows[rowIndex][column.key]"
+                @update:modelValue="emitRowsIfNew"
               />
               <template v-else>
                 <input
                   v-if="showInput(row, column, rowIndex)"
-                  v-model="row[column.key]"
+                  v-model="localRows[rowIndex][column.key]"
                   :type="column.type || 'text'"
                   step="0.01"
                   :class="inputClass(column.key)"
                   :placeholder="column.placeholder || ''"
                   @focus="setEditing(rowIndex, column.key)"
-                  @blur="clearEditing"
+                  @blur="handleBlur"
                 />
                 <span
                   v-else
@@ -54,9 +55,12 @@
         </tr>
       </tbody>
     </table> 
-    <button v-if="showAdd" class="btn btn-sm btn-primary" @click="addRow">Add Row</button>
+    <button v-if="showAdd" class="btn btn-sm btn-primary" @click="addRow">
+      Add Row
+    </button>
   </div>
 </template>
+
 <script>
 export default {
   name: "EditableGrid",
@@ -66,45 +70,50 @@ export default {
     showOpen: { type: Boolean, default: false },
     showAdd: { type: Boolean, default: true },
   },
-  emits: ["update:modelValue"],
+  emits: ["update:modelValue", "delete", "open"],
   data() {
     return {
+      localRows: JSON.parse(JSON.stringify(this.modelValue)), // deep clone
       editingCell: null,
     };
   },
-   
+  watch: {
+    modelValue: {
+      deep: true,
+      handler(newVal) {
+        // Keep local copy in sync with parent
+        this.localRows = JSON.parse(JSON.stringify(newVal));
+      },
+    },
+  },
   methods: {
     showInput(row, column, rowIndex) {
       return (this.isEditing(rowIndex, column.key) || !row[column.key] || column.type === 'checkbox') && !column.readonly;
     },
     inputClass(colKey) {
       const type = this.columns.find((col) => col.key === colKey)?.type || "text";
-
-      switch (type) {
-        case "text":
-          return "form-control";
-        case "number":
-          return "form-control";
-        case "date":
-          return "form-control";
-        case "checkbox":
-          return "";
-        default:
-          return "form-control";
+      return ["text", "number", "date"].includes(type) ? "form-control" : "";
+    },
+    emitRowsIfNew() {
+      if (JSON.stringify(this.localRows) !== JSON.stringify(this.modelValue)) {
+        this.emitRows();
       }
+    },
+    emitRows() {
+      this.$emit("update:modelValue", JSON.parse(JSON.stringify(this.localRows)));
     },
     addRow() {
       const newRow = {};
       this.columns.forEach((col) => {
         newRow[col.key] = col.default || "";
       });
-      this.$emit("update:modelValue", [...this.modelValue, newRow]);
+      this.localRows.push(newRow);
+      this.emitRows();
     },
     removeRow(index) {
-      let deleted_val = this.modelValue[index];
-      const updated = [...this.modelValue];
-      updated.splice(index, 1);
-      this.$emit("update:modelValue", updated);
+      const deleted_val = this.localRows[index];
+      this.localRows.splice(index, 1);
+      this.emitRows();
       this.$emit("delete", deleted_val);
     },
     isEditing(rowIndex, key) {
@@ -112,6 +121,10 @@ export default {
     },
     setEditing(rowIndex, key) {
       this.editingCell = { rowIndex, key };
+    },
+    handleBlur() {
+      this.clearEditing();
+      this.emitRows();
     },
     clearEditing() {
       this.editingCell = null;
@@ -122,4 +135,3 @@ export default {
   },
 };
 </script>
-

@@ -13,6 +13,7 @@ class BulkUpdateTransactionRequest extends FormRequest
     {
         return [
             'transactions' => 'required|array',
+            'transactions.*.id' => 'sometimes|exists:transactions,id',  
             'transactions.*.description' => 'sometimes|string|max:255',
             'transactions.*.amount' => 'sometimes|numeric',
             'transactions.*.is_income' => 'sometimes|boolean',

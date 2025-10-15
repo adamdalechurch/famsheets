@@ -13,7 +13,7 @@
     </div>
 
     <EditableGrid
-      v-model="formattedTransactions"
+      v-model.sync="formattedTransactions"
       :columns="columns"
       @open="openTransaction"
       @delete="deleteTransaction"
@@ -104,7 +104,7 @@ export default {
     },
   },
   watch: {
-    modelValue: {
+    localTransactions: {
       handler(newVal) {
         this.localTransactions = [...newVal];
         this.$emit('update:modelValue', this.localTransactions);
@@ -113,7 +113,7 @@ export default {
     },
   },
   computed: {
-    formattedTransactions:{
+    formattedTransactions: {
       get() {
         return this.localTransactions.map((transaction) => ({
           ...transaction,
@@ -151,7 +151,6 @@ export default {
         } else {
           this.localTransactions = res.data;
         }
-        this.$emit('update:modelValue', this.localTransactions);
       });
     },
     saveChanges() {

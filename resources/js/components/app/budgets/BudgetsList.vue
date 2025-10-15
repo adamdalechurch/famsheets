@@ -52,7 +52,6 @@ export default {
   watch: {
     modelValue: {
       handler(newVal) {
-        this.localBudgets = [...newVal];
         this.$emit('update:modelValue', this.localBudgets);
       },
       immediate: true,

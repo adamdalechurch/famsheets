@@ -5,7 +5,7 @@
       v-model="input"
       @input="onInput"
       @focus="showSuggestions = true"
-      @blur="() => setTimeout(() => (showSuggestions = false), 100)"
+      @blur="debounceBlur"
       :placeholder="placeholder"
     />
     <ul v-if="showSuggestions && filteredSuggestions.length">
@@ -71,6 +71,11 @@ export default {
       this.input = item[this.displayField];
       this.$emit('update:modelValue', item.id);
       this.showSuggestions = false;
+    },
+    debounceBlur: function() {
+      setTimeout(() => {
+        this.showSuggestions = false;
+      }, 200);
     }
   }
 };

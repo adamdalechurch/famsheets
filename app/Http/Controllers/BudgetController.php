@@ -116,18 +116,42 @@ public function createSmartBudget()
     $startDate = Carbon::now()->subMonths(12)->startOfMonth();
     $endDate = Carbon::now()->subMonth()->endOfMonth();
 
-$monthlyIncomeObj = DB::table('transactions')
-    ->where('transactions.user_id', $userId)
-    ->where('transactions.is_income', true)
-    ->whereBetween('transactions.transaction_date', [$startDate, now()])
-    ->groupBy('transactions.user_id')
-    ->select(DB::raw('SUM(amount) / 12 as avg_income'))
-    ->first();
+    // Count distinct months with income data
+    $incomeMonths = DB::table('transactions')
+        ->where('user_id', $userId)
+        ->where('is_income', true)
+        ->whereBetween('transaction_date', [$startDate, now()])
+        ->selectRaw('COUNT(DISTINCT DATE_FORMAT(transaction_date, "%Y-%m")) as month_count')
+        ->value('month_count');
+
+    if (!$incomeMonths || $incomeMonths == 0) {
+        return response()->json(['message' => 'No income data available to create a smart budget.'], 400);
+    }
+
+    // Calculate average monthly income
+    $monthlyIncomeObj = DB::table('transactions')
+        ->where('user_id', $userId)
+        ->where('is_income', true)
+        ->whereBetween('transaction_date', [$startDate, now()])
+        ->selectRaw('SUM(amount) / ? as avg_income', [$incomeMonths])
+        ->first();
 
     $monthlyIncome = $monthlyIncomeObj ? (float) $monthlyIncomeObj->avg_income : 0;
-    
+
     if ($monthlyIncome <= 0) {
         return response()->json(['message' => 'No income data available to create a smart budget.'], 400);
+    }
+
+    // Count distinct months with expense data
+    $expenseMonths = DB::table('transactions')
+        ->where('user_id', $userId)
+        ->where('is_income', false)
+        ->whereBetween('transaction_date', [$startDate, $endDate])
+        ->selectRaw('COUNT(DISTINCT DATE_FORMAT(transaction_date, "%Y-%m")) as month_count')
+        ->value('month_count');
+
+    if (!$expenseMonths || $expenseMonths == 0) {
+        return response()->json(['message' => 'No spending data found.'], 404);
     }
 
     // Get average monthly expenses by category
@@ -136,7 +160,7 @@ $monthlyIncomeObj = DB::table('transactions')
         ->where('user_id', $userId)
         ->where('is_income', false)
         ->groupBy('category_id')
-        ->select('category_id', DB::raw('ABS(SUM(amount) / 12) as monthly_average'))
+        ->select('category_id', DB::raw("ABS(SUM(amount) / $expenseMonths) as monthly_average"))
         ->get();
 
     if ($categoryAverages->isEmpty()) {
@@ -170,7 +194,10 @@ $monthlyIncomeObj = DB::table('transactions')
         'budget_id' => $budget->id,
         'income_cap' => round($monthlyIncome, 2),
         'scaling_factor' => round($scalingFactor, 3),
+        'months_used_for_income' => $incomeMonths,
+        'months_used_for_expenses' => $expenseMonths,
     ]);
 }
+
 
 }

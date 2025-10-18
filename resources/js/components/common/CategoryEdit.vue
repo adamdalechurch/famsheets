@@ -1,7 +1,7 @@
 <template>
   <AutoCompleteInput
     v-model="categoryId"
-    :suggestions="suggestions"
+    :suggestions="localSuggestions"
     display-field="name"
     placeholder="Transaction Category"
   />
@@ -12,13 +12,13 @@ import AutoCompleteInput from './AutoCompleteInput.vue';
 import axios from '@/util/axios';
 
 export default {
-  props: ['modelValue'],
+  props: ['modelValue', 'modelValueKey', 'suggestions'],
   emits: ['update:modelValue'],
   components: { AutoCompleteInput },
   data() {
     return {
       categoryId: this.modelValue,
-      suggestions: []
+      localSuggestions: this.suggestions || []
     };
   },
   watch: {
@@ -30,9 +30,12 @@ export default {
     }
   },
   mounted() {
-    axios.get('/api/categories').then(res => {
-      this.suggestions = res.data; // expects { id, name }
-    });
+    if (!this.suggestions) {
+      // Load categories if not provided
+      axios.get('/api/categories').then((res) => {
+        this.localSuggestions = res.data; // expects { id, name }
+      });
+    }
   }
 };
 </script>

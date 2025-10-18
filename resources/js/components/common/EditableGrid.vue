@@ -14,6 +14,7 @@
               <component
                 v-if="column.editor"
                 :is="column.editor"
+                v-bind="column.editorProps || {}"
                 v-model="localRows[rowIndex][column.key]"
                 @update:modelValue="emitRowsIfNew"
               />

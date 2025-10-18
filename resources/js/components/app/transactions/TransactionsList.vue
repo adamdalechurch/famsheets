@@ -13,7 +13,8 @@
     </div>
 
     <EditableGrid
-      v-model.sync="formattedTransactions"
+      v-if="formattedTransactions.length > 0 && categories.length > 0"
+      v-model="formattedTransactions"
       :columns="columns"
       @open="openTransaction"
       @delete="deleteTransaction"
@@ -71,7 +72,11 @@ export default {
           key: 'category_id',
           type: 'number',
           placeholder: 'Category ID',
-          editor: CategoryEdit
+          editor: CategoryEdit,
+          editorProps: {
+            modelValueKey: 'category_id',
+            suggestions: []
+          },
         },    
         {
           label: 'Date',
@@ -103,15 +108,6 @@ export default {
       default: 25,
     },
   },
-  watch: {
-    localTransactions: {
-      handler(newVal) {
-        this.localTransactions = [...newVal];
-        this.$emit('update:modelValue', this.localTransactions);
-      },
-      immediate: true,
-    },
-  },
   computed: {
     formattedTransactions: {
       get() {
@@ -130,9 +126,18 @@ export default {
         }));
       },
     },
+    categories: {
+      get() {
+        return this.columns.find(col => col.key === 'category_id').editorProps.suggestions;
+      },
+      set(val) {
+        this.columns.find(col => col.key === 'category_id').editorProps.suggestions = val;
+      },
+    },
   },
-  created() {
+  mounted() {
     this.loadTransactions();
+    this.loadCategories();
   },
   methods: {
     loadTransactions() {
@@ -151,6 +156,12 @@ export default {
         } else {
           this.localTransactions = res.data;
         }
+      });
+    },
+    loadCategories() {
+      axios.get('/api/categories').then((res) => {
+        this.categories = res.data; // expects { id, name }
+        this.columns.find(col => col.key === 'category_id').editorProps.suggestions = this.categories;
       });
     },
     saveChanges() {

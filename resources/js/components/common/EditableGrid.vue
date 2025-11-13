@@ -59,6 +59,9 @@
     <button v-if="showAdd" class="btn btn-sm btn-primary" @click="addRow">
       Add Row
     </button>
+    <button v-if="showSave" class="btn btn-sm btn-success" @click="save">
+      Save
+    </button>
   </div>
 </template>
 
@@ -70,6 +73,7 @@ export default {
     columns: { type: Array, required: true },
     showOpen: { type: Boolean, default: false },
     showAdd: { type: Boolean, default: true },
+    showSave: { type: Boolean, default: false },
   },
   emits: ["update:modelValue", "delete", "open"],
   data() {
@@ -132,6 +136,9 @@ export default {
     },
     fireOpen(row) {
       this.$emit("open", row);
+    },
+    save() {
+      this.$emit("save");
     },
   },
 };

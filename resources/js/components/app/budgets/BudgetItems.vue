@@ -2,7 +2,7 @@
   <div>
     <h4>Budget Items</h4>
     <EditableGrid
-      v-if="items.length > 0 && categories?.length > 0"
+      v-if="categories?.length > 0"
       v-model="items"
       :columns="columns"
     />

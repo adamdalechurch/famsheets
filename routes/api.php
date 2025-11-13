@@ -39,6 +39,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Categories
     Route::apiResource('categories', CategoryController::class);
+    Route::post('/categories/bulk-update', [CategoryController::class, 'bulkUpdate']);
 
     // Income Sources
     Route::apiResource('income-sources', IncomeSourceController::class);

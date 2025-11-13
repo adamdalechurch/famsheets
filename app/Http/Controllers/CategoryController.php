@@ -39,6 +39,27 @@ class CategoryController extends Controller
         return response()->json($category);
     }
 
+    public function bulkUpdate(Request $request)
+    {
+        $categoriesData = $request->all();
+        $updatedCategories = [];
+
+        foreach ($categoriesData as $data) {
+            if (isset($data['id'])) {
+                $category = Category::find($data['id']);
+                if ($category) {
+                    $category->update($data);
+                    $updatedCategories[] = $category;
+                }
+            } else {
+                $newCategory = Category::create($data);
+                $updatedCategories[] = $newCategory;
+            }
+        }
+
+        return response()->json($updatedCategories);
+    }
+
     public function destroy(Category $category)
     {
         $category->delete();

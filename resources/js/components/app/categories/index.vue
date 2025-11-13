@@ -6,6 +6,8 @@
       v-model="categories"
       :columns="columns"
       show-open="false"
+      show-save="true"
+      @save="saveChanges"
     />
 <!-- <div class="pagination mb-3">
   <button class="btn btn-secondary" @click="prevPage" :disabled="pagination.page <= 1">Prev</button>
@@ -60,14 +62,13 @@ export default {
     this.loadCategories();
  },
   methods: {
-    
     loadCategories() {
       axios.get('/api/categories').then((res) => {
         this.categories = res.data;
       });
     },
     saveChanges() {
-      axios.post('/api/categories', this.localTransactions).then((res) => {
+      axios.post('/api/categories/bulk-update', this.categories).then((res) => {
         this.categories = res.data;
       });
     },
